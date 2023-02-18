@@ -33,9 +33,9 @@ class _MainWrapperState extends State<MainWrapper> {
         controller: pageController,
         children: [
           HomePage() ,
-          MarketViewPage() ,
+         /* MarketViewPage() ,
           ProfilePage() ,
-          WatchListPage()
+          WatchListPage()*/
         ],
       ),
     ) ;

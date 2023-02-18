@@ -30,6 +30,7 @@ class _HomePageViewState extends State<HomePageView> {
   @override
   Widget build(BuildContext context) {
     return PageView(
+
       allowImplicitScrolling: true,
       controller: widget.controller,
       children: [

@@ -15,7 +15,7 @@ void main() {
 
   runApp(MultiProvider(
     providers: [
-      ChangeNotifierProvider<ThemeProvider>(create: (_) => ThemeProvider()),
+      ChangeNotifierProvider(create: (_) => ThemeProvider()),
 
     ],
     child: MyApp(),
