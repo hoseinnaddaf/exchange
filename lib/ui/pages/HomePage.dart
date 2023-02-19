@@ -1,10 +1,17 @@
 
 
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:echnage_sp/models/CryptoModel/CryptoData.dart';
+import 'package:echnage_sp/providers/CryptoDataProvider.dart';
 import 'package:echnage_sp/ui/ui_helper/HomePageView.dart';
 import 'package:echnage_sp/ui/ui_helper/themeSwitcher.dart';
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
+import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+import '../../network/ResponseModel.dart';
 
 class HomePage extends StatefulWidget {
 
@@ -23,11 +30,25 @@ class _HomePageState extends State<HomePage> {
 
   final List<String> _choiseList = ['Top MarketCaps' , 'Top Gainers' , 'Top Losers'] ;
 
+
+  @override
+  void initState() {
+    super.initState() ;
+
+    final cryptoProvider =  Provider.of<CryptoDataProvider>(context , listen: false  ) ;
+
+    cryptoProvider.getTopMarketCapData() ;
+
+  }
+
   @override
   Widget build(BuildContext context) {
 
     var primaryColor =  Theme.of(context).primaryColor ;
     var textTheme = Theme.of(context).textTheme ;
+
+    var width =  MediaQuery.of(context).size.width ;
+    var height =  MediaQuery.of(context).size.height ;
 
     return Scaffold(
         drawer: Drawer(),
@@ -46,7 +67,7 @@ class _HomePageState extends State<HomePage> {
             scrollDirection: Axis.vertical,
             child: Column(
               children: [
-                 Padding(
+                Padding(
                      padding: const EdgeInsets.only(top: 10.0 , left: 5.0 ,  right:  5.0),
                       child: SizedBox(
                         height: 160,
@@ -128,7 +149,7 @@ class _HomePageState extends State<HomePage> {
                                   disabledColor: Colors.grey[200],
                                   onSelected: (value){
                                       setState((){
-                                        defaultChoiseIndex = value ? index : defaultChoiseIndex ;  
+                                        defaultChoiseIndex = value ? index : defaultChoiseIndex ;
                                       }) ;
                                   },
                               );
@@ -138,7 +159,128 @@ class _HomePageState extends State<HomePage> {
                       )
                     ],
                   ),
-                )
+                ) ,
+                SizedBox(height: 5,) ,
+                SizedBox(
+                  height: 500,
+                  child: Consumer<CryptoDataProvider>(
+                      builder: (context, crypto , child ){
+                        switch(crypto.state.status)
+                        {
+                          case Status.LOADING :
+                              return SizedBox(
+                                  height: 80,
+                                  child: Shimmer.fromColors(
+                                      baseColor: Colors.grey.shade300,
+                                      highlightColor: Colors.white ,
+                                      child: ListView.builder(
+                                          itemCount: 25,
+                                          itemBuilder: (context ,  index)
+                                          {
+                                             return Row(
+                                               children: [
+                                                  Padding(
+                                                      padding: EdgeInsets.only(top: 8 ,bottom: 8 , left: 8) ,
+                                                      child: CircleAvatar(
+                                                          backgroundColor: Colors.white,
+                                                          radius: 30,
+                                                          child: Icon(Icons.add),
+                                                      ),
+                                                  ) ,
+                                                  Flexible(
+                                                      fit:FlexFit.tight ,
+                                                      child: Padding(
+                                                        padding: EdgeInsets.only(left: 8 , right: 8),
+                                                        child: Column(
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            SizedBox(
+                                                              width: 300,
+                                                              height: 15,
+                                                              child: Container(
+                                                                decoration: BoxDecoration(
+                                                                  borderRadius: BorderRadius.circular(5) ,
+                                                                  color: Colors.white ,
+                                                                ),
+                                                              ),
+                                                            ) ,
+                                                            Padding(
+                                                                padding:EdgeInsets.only(top: 8) ,
+                                                                child: SizedBox(
+                                                                  width: 250,
+                                                                  height: 15,
+                                                                  child: Container(
+                                                                    decoration: BoxDecoration(
+                                                                      borderRadius: BorderRadius.circular(5) ,
+                                                                      color: Colors.white ,
+                                                                    ),
+                                                                  ),
+
+                                                                ),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+
+                                                  )
+                                               ],
+                                             )  ;
+                                          }
+                                      ),
+
+                                  ),
+                              );
+                          case Status.COMPLETED :
+                              List<CryptoData>? model = crypto.dataFuture.data!.cryptoCurrencyList ;
+                              return ListView.separated(
+                                  itemBuilder: (context ,index){
+
+                                    var number = index + 1 ;
+                                    var tokenId = model![index].id ;
+                                    var tokenName =model![index].name.toString() ;
+
+                                    return SizedBox(
+                                      height:height* 0.075,
+                                      child: Row(
+                                        children: [
+                                          Padding(
+                                              padding: EdgeInsets.only(left: 10) ,
+                                              child: Text(number.toString() , style: textTheme.bodySmall,),
+
+                                          ) ,
+                                          Padding(
+                                              padding:EdgeInsets.only(left: 10, right: 10) ,
+                                              child: CachedNetworkImage(
+                                                  fadeInDuration: Duration(milliseconds: 500),
+                                                  height: 32,
+                                                  width: 32,
+                                                  imageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/$tokenId.png",
+                                                  placeholder: (context , url )=> CircularProgressIndicator(),
+                                                  errorWidget: (context ,url ,error)=> Icon(Icons.error),
+                                              ),
+                                          ) ,
+                                          Padding(
+                                            padding:EdgeInsets.only(left: 10, right: 10) ,
+                                            child: Text(tokenName , style: textTheme.bodySmall,),
+                                          ) ,
+                                        ],
+                                      ),
+                                    ) ;
+                                  },
+                                  separatorBuilder: (context ,  index ){
+                                    return Divider() ;
+                                  },
+                                  itemCount: model!.length) ;
+                          case Status.ERROR :
+                              return Text(crypto.state.message) ;
+                          default:
+                              return Container() ;
+
+                        }
+                      }
+                  ),
+                ) ,
+
 
 
               ],
