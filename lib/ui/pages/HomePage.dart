@@ -1,11 +1,14 @@
 
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:echnage_sp/helpers/decimalRounder.dart';
 import 'package:echnage_sp/models/CryptoModel/CryptoData.dart';
 import 'package:echnage_sp/providers/CryptoDataProvider.dart';
 import 'package:echnage_sp/ui/ui_helper/HomePageView.dart';
 import 'package:echnage_sp/ui/ui_helper/themeSwitcher.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:marquee/marquee.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -237,7 +240,19 @@ class _HomePageState extends State<HomePage> {
 
                                     var number = index + 1 ;
                                     var tokenId = model![index].id ;
-                                    var tokenName =model![index].name.toString() ;
+                                    var tokenName =model[index].name.toString() ;
+                                    var tokenSymbol =model[index].symbol.toString() ;
+
+                                    MaterialColor filterColor =  DecimalRounder.setColorFilter(model[index].quotes![0].percentChange24h) ;
+                                    var finalPrice = DecimalRounder.removePriceDecimals(model[index].quotes![0].price);
+
+                                    // percent change setup decimals and colors
+                                    var percentChange = DecimalRounder.removePercentDecimals(model[index].quotes![0].percentChange24h);
+
+                                    Color percentColor = DecimalRounder.setPercentChangesColor(model[index].quotes![0].percentChange24h);
+                                    Icon percentIcon = DecimalRounder.setPercentChangesIcon(model[index].quotes![0].percentChange24h);
+
+
 
                                     return SizedBox(
                                       height:height* 0.075,
@@ -259,10 +274,44 @@ class _HomePageState extends State<HomePage> {
                                                   errorWidget: (context ,url ,error)=> Icon(Icons.error),
                                               ),
                                           ) ,
-                                          Padding(
-                                            padding:EdgeInsets.only(left: 10, right: 10) ,
-                                            child: Text(tokenName , style: textTheme.bodySmall,),
-                                          ) ,
+                                          Flexible(
+                                            fit: FlexFit.tight,
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(tokenName,style: textTheme.bodySmall,),
+                                                Text(tokenSymbol,style: textTheme.labelSmall,),
+                                              ],
+                                            ),
+                                          ),
+                                          Flexible(
+                                            fit: FlexFit.tight,
+                                            child: ColorFiltered(
+                                                colorFilter: ColorFilter.mode(filterColor, BlendMode.srcATop),
+                                                child: SvgPicture.network("https://s3.coinmarketcap.com/generated/sparklines/web/1d/2781/$tokenId.svg")),
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(right: 10.0),
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                crossAxisAlignment: CrossAxisAlignment.end,
+                                                children: [
+                                                  Text("\$$finalPrice",style: textTheme.bodySmall,),
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.end,
+                                                    children: [
+                                                      percentIcon,
+                                                      Text(percentChange + "%",style: GoogleFonts.ubuntu(color: percentColor, fontSize: 13),),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+
+
                                         ],
                                       ),
                                     ) ;
