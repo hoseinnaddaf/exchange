@@ -47,4 +47,24 @@ class ApiProvider
 
   }
 
+  dynamic callRegisterApi(name , email , password) async
+  {
+    var formData =  FormData.fromMap({
+          'name'     : name  ,
+          'email'    : email  ,
+          'password' : password  ,
+
+    });
+
+    var url = 'https://besenior.ir/api/register';
+
+    final respone =  await Dio().post(
+        url,
+        data: formData
+    ) ;
+
+    return respone ;
+  }
+
+
 }
