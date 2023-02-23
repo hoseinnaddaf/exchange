@@ -41,4 +41,64 @@ class CryptoDataProvider extends ChangeNotifier{
     }
   }
 
+
+  getTopGainersData() async
+  {
+    state = ResponseModel.loading("is Loading") ;
+    try
+    {
+      response =  await apiProvider.getTopGainersData() ;
+
+      if(response.statusCode == 200)
+      {
+        dataFuture = AllCryptoModel.fromJson(response.data) ;
+        state = ResponseModel.completed(dataFuture) ;
+      }
+      else
+      {
+        state = ResponseModel.error("get data failed  , try again ") ;
+      }
+
+      notifyListeners() ;
+
+    }
+    catch(e)
+    {
+      state = ResponseModel.error("func has error :  "+ e.toString()) ;
+      notifyListeners() ;
+
+    }
+  }
+
+
+
+  getTopLosersData() async
+  {
+    state = ResponseModel.loading("is Loading") ;
+    try
+    {
+      response =  await apiProvider.getTopLosersData() ;
+
+      if(response.statusCode == 200)
+      {
+        dataFuture = AllCryptoModel.fromJson(response.data) ;
+        state = ResponseModel.completed(dataFuture) ;
+      }
+      else
+      {
+        state = ResponseModel.error("get data failed  , try again ") ;
+      }
+
+      notifyListeners() ;
+
+    }
+    catch(e)
+    {
+      state = ResponseModel.error("func has error :  "+ e.toString()) ;
+      notifyListeners() ;
+
+    }
+  }
+
+
 }
