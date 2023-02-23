@@ -1,4 +1,5 @@
 import 'package:echnage_sp/providers/CryptoDataProvider.dart';
+import 'package:echnage_sp/providers/MarketViewProvider.dart';
 import 'package:echnage_sp/providers/ThemeProvider.dart';
 import 'package:echnage_sp/ui/pages/MainWrapper.dart';
 import 'package:echnage_sp/ui/theme/MyThem.dart';
@@ -18,6 +19,7 @@ void main() {
     providers: [
       ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ChangeNotifierProvider(create: (_) => CryptoDataProvider()),
+      ChangeNotifierProvider(create: (_) => MarketViewProvider()),
 
     ],
     child: MyApp(),
