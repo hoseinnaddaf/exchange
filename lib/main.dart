@@ -2,6 +2,7 @@ import 'package:echnage_sp/providers/CryptoDataProvider.dart';
 import 'package:echnage_sp/providers/MarketViewProvider.dart';
 import 'package:echnage_sp/providers/ThemeProvider.dart';
 import 'package:echnage_sp/ui/pages/MainWrapper.dart';
+import 'package:echnage_sp/ui/pages/SignUpScreen.dart';
 import 'package:echnage_sp/ui/theme/MyThem.dart';
 import 'package:echnage_sp/ui/ui_helper/themeSwitcher.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +48,8 @@ class _MyAppState extends State<MyApp> {
             debugShowCheckedModeBanner: false,
             home: Directionality(
                 textDirection: TextDirection.ltr,
-                child: MainWrapper()
+                /*child: MainWrapper()*/
+                child: SignUpScreen()
             ),
           ) ;
         } );

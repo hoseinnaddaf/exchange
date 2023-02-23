@@ -42,6 +42,7 @@ dependencies:
   shimmer: ^2.0.0
   cached_network_image: ^3.2.1
   flutter_svg: ^1.0.3
+  lottie: ^1.2.2
 
 dev_dependencies:
   flutter_test:
@@ -71,6 +72,8 @@ flutter:
     - images/a2.png
     - images/a3.png
     - images/a4.png
+    - images/bitcointouch.json
+    - images/waveloop.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
